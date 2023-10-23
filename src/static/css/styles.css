@@ -1,5 +1,5 @@
 body {
-    background-color: white;
+    background-color: #659DBD;
     margin-top: 50px;
     font-family: 'Lato';
 }
@@ -38,6 +38,6 @@ button:focus {
     border: 1px solid #333;
 }
 h1 {
-background-color: green;
 text-align: center;
+colour: Black;
 }

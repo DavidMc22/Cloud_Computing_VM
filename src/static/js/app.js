@@ -115,10 +115,15 @@ function AddItemForm({ onNewItem }) {
 }
 
 function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
-    const { Container, Row, Col, Button } = ReactBootstrap;
-
+    const { Container, Row, Col, Button, InputGroup } = ReactBootstrap;
+    
+    // State to manage editing mode and input value
+    const [editing, setEditing] = React.useState(false);
+    const [editedName, setEditedName] = React.useState(item.name);
+    
     const toggleCompletion = () => {
-        fetch(`/items/${item.id}`, {
+
+               fetch(`/items/${item.id}`, {
             method: 'PUT',
             body: JSON.stringify({
                 name: item.name,
@@ -131,9 +136,30 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
     };
 
     const removeItem = () => {
+
         fetch(`/items/${item.id}`, { method: 'DELETE' }).then(() =>
             onItemRemoval(item),
         );
+    };
+
+    const toggleEdit = () => {
+        // Toggle the editing state
+        setEditing(!editing);
+    };
+
+    const saveEdit = () => {
+        // Save the edited item name
+        fetch(`/items/${item.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                name: editedName,
+                completed: item.completed,
+            }),
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(r => r.json())
+        .then(onItemUpdate);
+        toggleEdit(); // Exit edit mode
     };
 
     return (
@@ -158,8 +184,37 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
                         />
                     </Button>
                 </Col>
-                <Col xs={10} className="name">
-                    {item.name}
+                <Col xs={8} className="name">
+                    {editing ? (
+                        <InputGroup>
+                            <input
+                                type="text"
+                                value={editedName}
+                                onChange={(e) => setEditedName(e.target.value)}
+                            />
+                            <InputGroup.Append>
+                                <Button
+                                    size="sm"
+                                    variant="success"
+                                    onClick={saveEdit}
+                                >
+                                    Save
+                                </Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+                    ) : (
+                        item.name
+                    )}
+                </Col>
+                <Col xs={1} className="text-center">
+                    <Button
+                        size="sm"
+                        variant="link"
+                        onClick={toggleEdit}
+                        aria-label="Edit Item"
+                    >
+                        <i className="fa fa-edit text-primary" />
+                    </Button>
                 </Col>
                 <Col xs={1} className="text-center remove">
                     <Button
@@ -175,5 +230,6 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
         </Container>
     );
 }
+
 
 ReactDOM.render(<App />, document.getElementById('root'));
