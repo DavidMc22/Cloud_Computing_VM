@@ -50,24 +50,21 @@ function TodoListCard() {
     if (items === null) return 'Loading...';
 
     return (
-        <React.Fragment>
-            <AddItemForm onNewItem={onNewItem} />
-            {items.length === 0 && (
-                <p className="text-center">You have no todo items yet! Add one above!</p>
-
-                <p className="text-center">No items dshgshfsf yet! Add one above!</p>
-
-            )}
-            {items.map(item => (
-                <ItemDisplay
-                    item={item}
-                    key={item.id}
-                    onItemUpdate={onItemUpdate}
-                    onItemRemoval={onItemRemoval}
-                />
-            ))}
-        </React.Fragment>
-    );
+     <React.Fragment>
+        <AddItemForm onNewItem={onNewItem} />
+        {items.length === 0 && (
+            <p className="NoItems">No items yet! Add one above!</p>
+        )}
+        {items.map(item => (
+            <ItemDisplay
+                item={item}
+                key={item.id}
+                onItemUpdate={onItemUpdate}
+                onItemRemoval={onItemRemoval}
+            />
+        ))}
+    </React.Fragment>
+);
 }
 
 function AddItemForm({ onNewItem }) {
@@ -119,11 +116,9 @@ function AddItemForm({ onNewItem }) {
 
 function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
     const { Container, Row, Col, Button, InputGroup } = ReactBootstrap;
-    
     // State to manage editing mode and input value
     const [editing, setEditing] = React.useState(false);
     const [editedName, setEditedName] = React.useState(item.name);
-    
     const toggleCompletion = () => {
 
                fetch(`/items/${item.id}`, {
